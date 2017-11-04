@@ -8,7 +8,10 @@
   },
   "author": "",
   "license": "MIT",
+  "repository": "https://github.com/erinreily/rescue-me",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "moment": "^2.19.1",
+    "validate.js": "^0.12.0"
   }
 }
