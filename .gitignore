@@ -1,0 +1,12 @@
+.DS_Store*
+Icon?
+._*
+Thumbs.db
+ethumbs.db
+Desktop.ini
+*~
+node_modules
+*.log
+*.gz
+coverage
+benchmarks/graphs
