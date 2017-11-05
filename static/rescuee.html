@@ -12,7 +12,7 @@
     <script>
         function addPerson() {
             var num = $("#personForm form").length + 1;
-            var formHtml = '<h4 id="persontitle' + num + '">Person ' + num + '</h4><form id="person' + num + '"><div class="form-group"><label for="name">Full Name</label><input type="text" class="form-control" id="name" placeholder="Full Name"></div><div class="form-group"><label for="age">Age</label><input type="number" class="form-control" id="age" placeholder="Age"></div><div class="form-group"><label for="gender">Gender</label><select class="form-control" id="gender"><option>Male</option><option>Female</option><option>Other</option></select></div><div class="form-group"><label for="name">Comments (optional)</label><input type="text" class="form-control" id="comments" placeholder="Comments (optional)"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePerson(' + num + ')" class="btn btn-danger" id="deletePerson' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Person ' + num + '</button>'
+            var formHtml = '<h4 id="persontitle' + num + '">Person ' + num + '</h4><form id="person' + num + '"><div class="form-group"><label for="name' + num + '">Full Name</label><input type="text" class="form-control" id="name' + num + '" placeholder="Full Name"></div><div class="form-group"><label for="age' + num + '">Age</label><input type="number" class="form-control" id="age' + num + '" placeholder="Age"></div><div class="form-group"><label for="gender' + num + '">Gender</label><select class="form-control" id="gender' + num + '"><option>Male</option><option>Female</option><option>Other</option></select></div><div class="form-group"><label for="comments' + num + '">Comments (optional)</label><input type="text" class="form-control" id="comments' + num + '" placeholder="Comments (optional)"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePerson(' + num + ')" class="btn btn-danger" id="deletePerson' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Person ' + num + '</button>'
             $("#personForm").append(formHtml);
         }
         function deletePerson(num) {
@@ -22,13 +22,40 @@
         }
         function addPet() {
             var num = $("#petForm form").length + 1;
-            var formHtml = '<h4 id="pettitle' + num + '">Pet ' + num + '</h4><form id="pet' + num + '"><div class="form-group"><label for="type">Type/Breed</label><input type="text" class="form-control" id="type" placeholder="Type/Breed"></div><div class="form-group"><label for="age">Age</label><input type="number" class="form-control" id="age" placeholder="Age"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePet(' + num + ')" class="btn btn-danger" id="deletePet' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Pet ' + num + '</button>'
+            var formHtml = '<h4 id="pettitle' + num + '">Pet ' + num + '</h4><form id="pet' + num + '"><div class="form-group"><label for="type' + num + '">Type/Breed</label><input type="text" class="form-control" id="type' + num + '" placeholder="Type/Breed"></div><div class="form-group"><label for="petage' + num + '">Age</label><input type="number" class="form-control" id="petage' + num + '" placeholder="Age"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePet(' + num + ')" class="btn btn-danger" id="deletePet' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Pet ' + num + '</button>'
             $("#petForm").append(formHtml);
         }
         function deletePet(num) {
             $("#pet" + num).remove();
             $("#deletePet" + num).remove();
             $("#pettitle" + num).remove();
+        }
+        function submit() {
+            var jsonData = {
+                person: [],
+                pet: [],
+                address, email, phone
+            };
+            $("#personForm form").each(function (index) {
+                var name = $("#name" + (index + 1)).val();
+                var age = $("#age" + (index + 1)).val();
+                var gender = $("#gender" + (index + 1)).val();
+                var comments = $("#comments" + (index + 1)).val();
+                jsonData.person.push({ name: name, age: age, gender: gender, comments: comments });
+            });
+            $("#petForm form").each(function (index) {
+                var type = $("#type" + (index + 1)).val();
+                var petage = $("#petage" + (index + 1)).val();
+                jsonData.pet.push({ type: type, age: petage });
+            });
+            jsonData.address = $("#address").val();
+            jsonData.email = $("#email").val();
+            jsonData.phone = $("#phone").val();
+            console.log(jsonData);
+            $.post(URL,jsonData,
+                function () {
+                    console.log("Hey, it's a success!");
+                });
         }
     </script>
 </head>
@@ -72,7 +99,7 @@
                 <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
             </div>
         </form>
-        <button style="margin-top:10px;" type="submit" class="btn btn-default">Submit</button>
+        <button onclick="submit()" style="margin-top:10px;" type="submit" class="btn btn-default">Submit</button>
     </div>
 
 </body>
