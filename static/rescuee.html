@@ -44,6 +44,26 @@
 			var result = document.getElementById('result');     
 			result.innerHTML = "<h3>"+num+"</h3>";
 		}
+		function postRequest(jsonData) {
+			$.post("/api/requests", jsonData,
+                        function () {
+                            console.log("Hey, it's a success!");
+                        },
+                        'json');
+		}
+		function promptForAddress(jsonData) {
+			var address = prompt('Please enter your address (empty to cancel):');
+			if (address && address !== '') {
+				$.get("/api/geocode", {'address': address}, function(data) {
+					if (data.status == 'success') {
+						jsonData.location = data.data;
+						postRequest(jsonData);
+					} else {
+						alert('there was a problem getting the coordinates: ' + data.errors);
+					}
+				}, 'json');
+			}
+		}
         function submit() {
             var jsonData = {
                 people: [],
@@ -83,17 +103,14 @@
                     lat = position.coords.latitude;
                     lng = position.coords.longitude;
                     jsonData.location = { latitude: lat, longitude: lng };
-                    $.post("/api/requests", jsonData,
-                        function () {
-                            console.log("Hey, it's a success!");
-                        },
-                        'json');
+                    postRequest(jsonData);
                 }, function () {
                     console.log("error in getting current position");
+					promptForAddress(jsonData);
                 });
             } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
-                jsonData.location = { latitude: 0, longitude: 0 };
+                promptForAddress(jsonData);
             }
         }
     </script>
