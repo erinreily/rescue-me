@@ -176,8 +176,42 @@ router.get('/requests', async (req, res) => {
     const minSeverity = parseFloat(req.minSeverity) || 0;
     const client = await pool.connect();
     try {
-        const { rows } = await client.query('SELECT id, severity, creation, ST_X(location) as longitude, ST_Y(location) as latitude FROM request WHERE NOT resolved AND ST_Distance_Sphere(location, ST_MakePoint($1, $2)) <= $3 ORDER BY severity DESC, creation DESC LIMIT 500', [longitude, latitude, radius]);
-        res.json(rows);
+        const { rows } = await client.query('SELECT id, severity, creation, ST_X(location) as longitude, ST_Y(location) as latitude FROM request WHERE NOT resolved AND ST_Distance_Sphere(location, ST_MakePoint($1, $2)) <= $3 AND severity >= $4 ORDER BY severity DESC, creation DESC LIMIT 500', [longitude, latitude, radius, minSeverity]);
+        res.json({'status': 'success', 'data': rows, 'errors': []});
+    } finally {
+        client.release();
+    }
+});
+
+router.get('/requests/:id', async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+        res.status(400).json({'status': 'error', 'errors': ['id must be a valid integer'], 'data': null});
+        return;
+    }
+    const client = await pool.connect();
+    try {
+        const { rows } = await client.query('SELECT id, severity, ST_X(location) as longitude, ST_Y(location) as latitude, creation, resolved FROM request WHERE id = $1', [id]);
+        if (rows.length == 0) {
+            res.status(404).json({'status': 'error', 'errors': ['request with id ' + id + ' not found'], 'data': null});
+            return;
+        }
+        if (rows.length > 1) {
+            res.status(500).json({'status': 'error', 'errors': ['SELECT on primary key returned more than one row'], 'data': null});
+            return;
+        }
+        const row = rows[0];
+        const request = {
+            id: row.id,
+            severity: row.severity,
+            location: { 'longitude': row.longitude, 'latitude': row.latitude },
+            creation: row.creation,
+            resolved: row.resolved,
+            people: [],
+            pets: [],
+            contact: []
+        };
+        res.json({'status': 'success', 'errors': [], 'data': request});
     } finally {
         client.release();
     }
