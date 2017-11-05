@@ -197,7 +197,7 @@ router.get('/requests/:id', async (req, res) => {
     }
     const client = await pool.connect();
     try {
-        const { rows } = await client.query('SELECT id, severity, ST_X(location) as longitude, ST_Y(location) as latitude, creation, resolved FROM request WHERE id = $1', [id]);
+        const { rows } = await client.query('SELECT id, severity, ST_X(location) as longitude, ST_Y(location) as latitude, creation, resolved, taken FROM request WHERE id = $1', [id]);
         if (rows.length == 0) {
             res.status(404).json({'status': 'error', 'errors': ['request with id ' + id + ' not found'], 'data': null});
             return;
