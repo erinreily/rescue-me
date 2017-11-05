@@ -9,8 +9,25 @@
             crossorigin="anonymous"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrVbL6gcTITP7_sqp7GGUDD4UVppmdPxA"></script>
     <script src="gmaps.js"></script>
+    <script>
+        function getData() {
+            var lat = 29.721826;
+            var lng = -95.340518;
+            var radius = 80450; //about 50 miles
+            //if (navigator.geolocation) {
+            //    navigator.geolocation.getCurrentPosition(function (position) {
+            //        lat = position.coords.latitude;
+            //        lng = position.coords.longitude;
+            //    });
+            $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
+                //populate panels
+                console.log(data);
+            });
+        }
+        window.onload = getData;
+    </script>
 </head>
 <body style="background-image:url('images/rescueboat.jpg'); background-size:200%;">
     <nav class="navbar navbar-default">
@@ -21,7 +38,7 @@
             </div>
         </div>
     </nav>
-    <div class="container-fluid" >
+    <div class="container-fluid">
         <div class="center-block" id="map" style="width:80vw;height:80vw;border:2px solid white; padding:1%;"></div>
     </div>
     <script>
@@ -33,13 +50,14 @@
     </script>
     <br />
     <div id="requests" class="container-fluid">
-		<p style="font-size:5vw;color:white;">Order by
-		<select name="Order" style="font-size:5vw; color:#4b4b4b; height:15vw; width:30vw">
-			<option value="closeness" style="font-size:4vw;" selected><h3>Closeness</h3></option>
-			<option value="severity" style="font-size:4vw;"><h3>Severity</h3></option>
-		</select>
-		</p>
-		<br>
+        <p style="font-size:5vw;color:white;">
+            Order by
+            <select name="Order" style="font-size:5vw; color:#4b4b4b; height:15vw; width:30vw">
+                <option value="closeness" style="font-size:4vw;" selected><h3>Closeness</h3></option>
+                <option value="severity" style="font-size:4vw;"><h3>Severity</h3></option>
+            </select>
+        </p>
+        <br>
         <!--This html will be generated dynamically from database-->
         <a href="rescuer-details.html">
             <div class="panel panel-default">
