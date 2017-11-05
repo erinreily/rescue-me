@@ -182,7 +182,7 @@ function updateLocation() {
   getData();
 }
 	
-$.ready(function(){
+$(document).ready(function(){
 	if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
 	    function (position) {
