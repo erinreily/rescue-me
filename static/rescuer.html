@@ -21,7 +21,7 @@
             //        lat = position.coords.latitude;
             //        lng = position.coords.longitude;
             //    });
-            $.get("/api/requests?near=" + lat + "," + lng + "&radius=" + radius, "", function (data, status, jqxhr) {
+            $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
                 //populate panels
                 console.log(data);
             });
