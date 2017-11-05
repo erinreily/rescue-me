@@ -45,7 +45,7 @@
 			result.innerHTML = "<h3>"+num+"</h3>";
 		}
 		function postRequest(jsonData) {
-			$.post("/api/requests", jsonData,
+			$.post("/api/requests", JSON.stringify(jsonData),
                         function () {
                             console.log("Hey, it's a success!");
                         },
