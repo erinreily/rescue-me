@@ -93,6 +93,15 @@
             //    });
 
             $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
+                data.data.sort(function(a, b) {
+                  if (a.taken && !b.taken) {
+                    return 1;
+                  }
+                  if (b.taken && !a.taken) {
+                    return -1;
+                  }
+                  return a.distance - b.distance;
+                });
                 for (var i = 0; i < data.data.length; i++) {
                   (function(id, panel) {
                   panel.click(function() {
@@ -145,14 +154,6 @@
     </script>
     <br />
     <div id="requests" class="container-fluid">
-        <p style="font-size:5vw;color:white;">
-            Order by
-            <select name="Order" style="font-size:5vw; color:#4b4b4b; height:15vw; width:30vw">
-                <option value="closeness" style="font-size:4vw;" selected><h3>Closeness</h3></option>
-                <option value="severity" style="font-size:4vw;"><h3>Severity</h3></option>
-            </select>
-        </p>
-        <br>
         <div id="panels"class="container-fluid"></div>
         <!--This html will be generated dynamically from database-->
 
