@@ -30,10 +30,16 @@ const router = new Router();
 //     contact: [{
 //         phone: string
 //         email: string
-//         primary: bool
+//         primary: boolean
 //     }]
-//     id: number
 //     severity: number
+//     location: {
+//         longitude: number
+//         latitude: number
+//     }
+//     // only set after insertion:
+//     id: number
+//     resolved: boolean
 // }
 
 const VALID_GENDERS = ['male', 'female'];
@@ -75,8 +81,12 @@ function validateRequest(request) {
     }
     if (!request.severity)
         errors.push('severity must not be empty');
+    if (!request.location || !request.location.longitude || !request.location.latitude)
+        errors.push('location must be an object {longitude, latitude}');
     if (request.id)
         errors.push('id must not be present');
+    if (request.resolved)
+        errors.push('resolved must not be present');
     if (errors)
         return {
             'valid': false,
@@ -89,62 +99,22 @@ function validateRequest(request) {
         }
 }
 
-sample_requests = [
-    {
-        'id': 1,
-        'body': {
-            'people': [
-                {
-                    'name': 'John Doe',
-                    'gender': 'male',
-                    'age': 24,
-                    'comments': ''
-                },
-                {
-                    'name': 'Jane Doe',
-                    'gender': 'female',
-                    'age': 25,
-                    'comments': 'Both legs broken.'
-                }
-            ],
-            'pets': [
-                {
-                    'type': 'dog',
-                    'breed': 'labrador',
-                    'age': 3
-                },
-                {
-                    'type': 'cat',
-                    'breed': 'domestic',
-                    'age': 2
-                }
-            ],
-            'contact': [
-                {
-                    'phone': '1234567890',
-                    'email': 'johndoe@example.com',
-                    'primary': true
-                },
-                {
-                    'phone': '5551234567',
-                    'email': 'janedoe@example.com',
-                    'primary': false
-                }
-            ],
-            'severity': 2,
-            'confirm': 12345
-        },
-        'location': {
-            'latitude': 29.7215787,
-            'longitude': -95.3406465,
-            'accuracy': 28
+async function addRequest(request) {
+    const client = await pool.connect();
+    try {
+        const { rows } = await client.query('INSERT INTO request (severity, location) VALUES ($1, ST_MakePoint($2, $3)) RETURNING id', [request.severity, request.location.longitude, request.location.latitude]);
+        if (rows.length == 0) {
+            throw 'INSERT ... RETURNING returned no rows';
         }
+        if (rows.length > 1) {
+            throw 'INSERT ... RETURNING returned more than one row';
+        }
+        const id = rows[0].id;
+        // TODO: insert subfields
+        return {'id': id};
+    } finally {
+        client.release();
     }
-];
-
-function addRequest(request) {
-    request.id = 13579;
-    return request;
 }
 
 router.get('/requests', async (req, res) => {
@@ -220,7 +190,7 @@ router.get('/requests/:id', async (req, res) => {
     }
 });
 
-router.post('/requests', jsonParser, (req, res) => {
+router.post('/requests', jsonParser, async (req, res) => {
     if (!req.body) {
         res.status(400).json({
             'status': 'error',
@@ -238,12 +208,18 @@ router.post('/requests', jsonParser, (req, res) => {
         });
         return;
     }
-    const added = addRequest(req.body);
+    let added = null;
+    let error = null;
+    try {
+        added = await addRequest(req.body);
+    } catch (e) {
+        error = e;
+    }
     if (!added) {
         req.status(500).json({
             'status': 'error',
             'data': null,
-            'errors': ['internal error adding the request']
+            'errors': ['internal error adding the request: ' + error]
         });
         return;
     }
