@@ -44,33 +44,37 @@
                     pet = data.data.pets[i];
                     $('#pets').append(pet.type + ', ' + pet.breed + ', ' + pet.age + '<br />');
                 }
-                // make a new button each time
-                var button = $('<input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">');
-                $('#takeButton').html('');
-                $('#takeButton').append(button);
-                button.click(function() {
-                  if (button.prop('disabled'))
-                    return;
-                  button.prop('disabled', true);
-                  postJSON("/api/requests/" + id + "/take", {}, function(respData) {
-                    if (respData.status === 'success') {
-                      button.replaceWith(document.createTextNode("Taken!"));
-                      $('#modalConfirm').modal('hide');
-                    } else {
-                      alert('error taking: ' + respData.errors);
-                      button.prop('disabled', false);
-                    }
+                if (data.data.taken !== null) {
+                  // make a new button each time
+                  var button = $('<input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">');
+                  $('#takeButton').html('');
+                  $('#takeButton').append(button);
+                  button.click(function() {
+                    if (button.prop('disabled'))
+                      return;
+                    button.prop('disabled', true);
+                    postJSON("/api/requests/" + id + "/take", {}, function(respData) {
+                      if (respData.status === 'success') {
+                        button.replaceWith(document.createTextNode("Taken!"));
+                        $('#modalConfirm').modal('hide');
+                      } else {
+                        alert('error taking: ' + respData.errors);
+                        button.prop('disabled', false);
+                      }
+                    });
                   });
-                });
-                $('#modalConfirm').modal();
-                $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
-                  if (geodata.status !== 'success') {
-                    addressSpan.text('Error decoding address: ' + geodata.errors);
-                    return;
-                  } else {
-                    addressSpan.text(geodata.data.address);
-                  }
-                }, 'json');
+                  $('#modalConfirm').modal();
+                  $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
+                    if (geodata.status !== 'success') {
+                      addressSpan.text('Error decoding address: ' + geodata.errors);
+                      return;
+                    } else {
+                      addressSpan.text(geodata.data.address);
+                    }
+                  }, 'json');
+                } else {
+                  $('#takeButton').text('Already taken!');
+                }
             });
         }
         function getData() {
