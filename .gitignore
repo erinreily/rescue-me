@@ -10,3 +10,5 @@ node_modules
 *.gz
 coverage
 benchmarks/graphs
+/config.json
+/priv_key
