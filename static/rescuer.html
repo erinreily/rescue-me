@@ -12,6 +12,22 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrVbL6gcTITP7_sqp7GGUDD4UVppmdPxA"></script>
     <script src="gmaps.js"></script>
     <script>
+        function openDetails(id) {
+            $.get("/api/requests/" + id, "", function (data, status, jqxhr) {
+                if (data.status !== 'success')
+                    alert('there was an error submitting the request: ' + data.errors);
+                $('#address').append(data.data.latitude + ', ' + data.data.longitude);
+                for (var i = 0; i < data.data.people.length; i++) {
+                    person = data.data.people[i];
+                    $('#people').append(person.name + ', ' + person.gender + ', ' + person.age + ', ' + person.comments + '<br />');
+                }
+                for (var i = 0; i < data.data.pets.length; i++) {
+                    pet = data.data.pets[i];
+                    $('#pets').append(pet.type + ', ' + pet.breed + ', ' + pet.age + '<br />');
+                }
+                $('#modalConfirm').modal();
+            });
+        }
         function getData() {
             var lat = 29.721826;
             var lng = -95.340518;
@@ -23,7 +39,15 @@
             //    });
             $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
                 for (var i = 0; i < data.data.length; i++) {
-                    $("#panels").append('<a href="rescuer-details.html"><div class="panel panel-default"><div class="panel-body">Severity: ' + data.data[i].severity + ' Distance: ' + data.data[i].distance + '</div></div></a>')
+                    $("#panels").append('<div onclick="openDetails("' + data.data[i].id + '")" class="panel panel-default"><div class="panel-body">Severity: ' + data.data[i].severity + ' Distance: ' + data.data[i].distance + ' ID: ' + data.data[i].id + '</div></div>')
+                    mapObj.addMarker({
+                        lat: data.data[i].latitude,
+                        lng: data.data[i].longitude,
+                        title: data.data[i].id,
+                        click: function (e) {
+                  
+                        }
+                    });
                 }
             });
         }
@@ -45,8 +69,8 @@
     <script>
         var mapObj = new GMaps({
             el: '#map',
-            lat: 48.857,
-            lng: 2.295
+            lat: 30,
+            lng: -95
         });
     </script>
     <br />
@@ -62,5 +86,25 @@
         <div id="panels"class="container-fluid"></div>
         <!--This html will be generated dynamically from database-->
 
+    </div>
+    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detailed View</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalText" class="modal-body">
+                    <div id="address"></div>
+                    <div id="people"></div>
+                    <div id="pets"></div>
+                </div>
+                <div class="modal-footer">
+                    <input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">
+                </div>
+            </div>
+        </div>
     </div>
 </body>
