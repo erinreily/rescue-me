@@ -82,9 +82,8 @@
                 }, 'json');
             });
         }
+		var markers = [];
         function getData() {
-            var lat = 29.721826;
-            var lng = -95.340518;
             var radius = 80450; //about 50 miles
             //if (navigator.geolocation) {
             //    navigator.geolocation.getCurrentPosition(function (position) {
@@ -92,7 +91,12 @@
             //        lng = position.coords.longitude;
             //    });
 
-            $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
+            $.get("/api/requests?near=" + currentLocation.longitude + "," + currentLocation.latitude + "&radius=" + radius, "", function (data, status, jqxhr) {
+				for (int i = 0; i < markers.length; i++) {
+					markers[i].setMap(null);
+				}
+				markers = [];
+				$('#panels').html('');
                 for (var i = 0; i < data.data.length; i++) {
                   (function(id, panel) {
                   panel.click(function() {
@@ -117,11 +121,11 @@
                           panel.removeClass('panel-highlight');
                         }
                     });
+					markers.push(marker);
                   })(data.data[i].id, $('<div class="panel panel-default"><div class="panel-body"></div></div>'));
                 }
             });
         }
-        window.onload = getData;
     </script>
 </head>
 <body style="background-image:url('images/rescueboat.jpg'); background-size:200%;">
@@ -136,12 +140,28 @@
     <div class="container-fluid">
         <div class="center-block" id="map" style="width:80vw;height:80vw;border:2px solid white; padding:1%;"></div>
     </div>
-    <script>
-        var mapObj = new GMaps({
-            el: '#map',
-            lat: 29.721826,
-            lng: -95.340518
-        });
+    <script type="text/javascript">
+	var currentLocation = {latitude: 29.721826, longitude: -95.340518};
+	var mapObj = new GMaps({
+      el: '#map',
+      lat: currentLocation.latitude;
+      lng: currentLocation.longitude;
+	});
+	
+	if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+	    function (position) {
+          currentLocation.latitude = position.coords.latitude;
+          currentLocation.longitude = position.coords.longitude;
+		  mapObj.panTo({lat: currentLocation.latitude, lng:currentLocation.longitude});
+		  getData();
+        },  
+		function () {
+          //TODO: prompt for address
+        }
+	  );
+    }
+	getData();
     </script>
     <br />
     <div id="requests" class="container-fluid">
