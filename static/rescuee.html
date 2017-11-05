@@ -121,6 +121,7 @@
                 x.innerHTML = "Geolocation is not supported by this browser.";
                 promptForAddress(jsonData);
             }
+            console.log(jsonData);
         }
     </script>
 </head>
@@ -134,6 +135,7 @@
         </div>
     </nav>
     <h1 class="text-center">Who needs rescuing? <br /><small>Enter all people and pets</small></h1>
+    <h5 class="text-center">Or <a href="status.html">check status of submitted request</a></h5>
     <div class="container" style="width:80%">
         <h3>People</h3>
         <div id="personForm"></div>
