@@ -12,33 +12,27 @@
     <script>
         function addPerson() {
             var num = $("#personForm form").length + 1;
-            var formHtml = '<h4 id="persontitle' + num + '">Person ' + num + '</h4><form id="person' + num + '"><div class="form-group"><label for="name' + num + '">Full Name</label><input type="text" class="form-control" id="name' + num + '" placeholder="Full Name"></div><div class="form-group"><label for="age' + num + '">Age</label><input type="number" class="form-control" id="age' + num + '" placeholder="Age"></div><div class="form-group"><label for="gender' + num + '">Gender</label><select class="form-control" id="gender' + num + '"><option>Male</option><option>Female</option><option>Other</option></select></div><div class="form-group"><label for="comments' + num + '">Comments (optional)</label><input type="text" class="form-control" id="comments' + num + '" placeholder="Comments (optional)"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePerson(' + num + ')" class="btn btn-danger" id="deletePerson' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Person ' + num + '</button>'
+            var formHtml = '<form id="person' + num + '"><h4>Person ' + num + '</h4><div class="form-group"><label>Full Name</label><input type="text" class="form-control name" placeholder="Full Name"></div><div class="form-group"><label>Age</label><input type="number" class="form-control age" placeholder="Age"></div><div class="form-group"><label>Gender</label><select class="form-control gender"><option>Male</option><option>Female</option><option>Other</option></select></div><div class="form-group"><label>Comments (optional)</label><input type="text" class="form-control comments" placeholder="Comments (optional)"></div><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePerson(' + num + ')" class="btn btn-danger"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Person ' + num + '</button></form>'
             $("#personForm").append(formHtml);
         }
         function deletePerson(num) {
             $("#person" + num).remove();
-            $("#deletePerson" + num).remove();
-            $("#persontitle" + num).remove();
         }
         function addPet() {
             var num = $("#petForm form").length + 1;
-            var formHtml = '<h4 id="pettitle' + num + '">Pet ' + num + '</h4><form id="pet' + num + '"><div class="form-group"><label for="type' + num + '">Type</label><select class="form-control" id="type' + num + '"><option>Cat</option><option>Dog</option><option>Bird</option><option>Rodent</option><option>Other</option></select></div><div class="form-group"><label for="breed' + num + '">Breed</label><input type="text" class="form-control" id="breed' + num + '" placeholder="Breed"></div><div class="form-group"><label for="petage' + num + '">Age</label><input type="number" class="form-control" id="petage' + num + '" placeholder="Age"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePet(' + num + ')" class="btn btn-danger" id="deletePet' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Pet ' + num + '</button>'
+            var formHtml = '<form id="pet' + num + '"><h4>Pet ' + num + '</h4><div class="form-group"><label>Type</label><select class="form-control type"><option>Cat</option><option>Dog</option><option>Bird</option><option>Rodent</option><option>Other</option></select></div><div class="form-group"><label>Breed</label><input type="text" class="form-control breed" placeholder="Breed"></div><div class="form-group"><label>Age</label><input type="number" class="form-control age" placeholder="Age"></div><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePet(' + num + ')" class="btn btn-danger"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Pet ' + num + '</button></form>'
             $("#petForm").append(formHtml);
         }
         function deletePet(num) {
             $("#pet" + num).remove();
-            $("#deletePet" + num).remove();
-            $("#pettitle" + num).remove();
         }
         function addContact() {
             var num = $("#contactForm form").length + 1;
-            var formHtml = '<h4 id="contacttitle' + num + '">Contact ' + num + '</h4><form id="contact' + num + '"><div class="form-group"><label for="email' + num + '">Email</label><input type="email" class="form-control" id="email' + num + '" placeholder="Email"></div><div class="form-group"><label for="phone' + num + '">Phone Number</label><input type="tel" class="form-control" id="phone' + num + '" placeholder="Phone Number"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deleteContact(' + num + ')" class="btn btn-danger" id="deleteContact' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Contact ' + num + '</button>';
+            var formHtml = '<form id="contact' + num + '"><h4>Contact ' + num + '</h4><div class="form-group"><label>Email</label><input type="email" class="form-control email" placeholder="Email"></div><div class="form-group"><label>Phone Number</label><input type="tel" class="form-control phone" placeholder="Phone Number"></div><button style="margin-bottom:2%;margin-top:2%;" onclick="deleteContact(' + num + ')" class="btn btn-danger"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Contact ' + num + '</button></form>';
             $("#contactForm").append(formHtml);
         }
         function deleteContact(num) {
             $("#contact" + num).remove();
-            $("#deleteContact" + num).remove();
-            $("#contacttitle" + num).remove();
         }
 		function showValue(num) {
 			var result = document.getElementById('result');     
@@ -72,21 +66,21 @@
                 severity: 1
             };
             $("#personForm form").each(function (index) {
-                var name = $("#name" + (index + 1)).val();
-                var age = $("#age" + (index + 1)).val();
-                var gender = $("#gender" + (index + 1)).val().toLowerCase();
-                var comments = $("#comments" + (index + 1)).val();
+                var name = $(this).find(".name").val();
+                var age = $(this).find(".age").val();
+                var gender = $(this).find(".gender").val().toLowerCase();
+                var comments = $(this).find(".comments").val();
                 jsonData.people.push({ name: name, gender: gender, age: age, comments: comments });
             });
             $("#petForm form").each(function (index) {
-                var type = $("#type" + (index + 1)).val();
-                var breed = $("#breed" + (index + 1)).val();
-                var petage = $("#petage" + (index + 1)).val();
+                var type = $(this).find(".type").val();
+                var breed = $(this).find(".breed").val();
+                var petage = $(this).find(".age").val();
                 jsonData.pets.push({ type: type, breed: breed, age: petage });
             });
             $("#contactForm form").each(function (index) {
-                var email = $("#email" + (index + 1)).val();
-                var phone = $("#phone" + (index + 1)).val();
+                var email = $(this).find(".email").val();
+                var phone = $(this).find(".phone").val();
                 if (index = 0) {
                     var primary = true;
                 }
@@ -96,22 +90,22 @@
                 jsonData.contacts.push({ phone: phone, email: email, primary: primary });
             });
             jsonData.severity = $("#severityForm").val();
-            var lat;
-            var lng;
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    lat = position.coords.latitude;
-                    lng = position.coords.longitude;
-                    jsonData.location = { latitude: lat, longitude: lng };
-                    postRequest(jsonData);
-                }, function () {
-                    console.log("error in getting current position");
-					promptForAddress(jsonData);
-                });
-            } else {
-                x.innerHTML = "Geolocation is not supported by this browser.";
-                promptForAddress(jsonData);
-            }
+            //var lat;
+            //var lng;
+            //if ("geolocation" in navigator) {
+            //    navigator.geolocation.getCurrentPosition(function (position) {
+            //        lat = position.coords.latitude;
+            //        lng = position.coords.longitude;
+            //        jsonData.location = { latitude: lat, longitude: lng };
+            //        //postRequest(jsonData);
+            //    }, function () {
+            //        console.log("error in getting current position");
+			//		promptForAddress(jsonData);
+            //    });
+            //} else {
+            //    x.innerHTML = "Geolocation is not supported by this browser.";
+            //    promptForAddress(jsonData);
+            //}
             console.log(jsonData);
         }
     </script>
@@ -153,14 +147,14 @@
     <div class="container" style="width:80%">
         <h3>Primary Contact Information</h3>
         <div id="contactForm">
-            <form id="contact1">
+            <form>
                 <div class="form-group">
-                    <label for="email1">Email</label>
-                    <input type="email" class="form-control" id="email1" placeholder="Email">
+                    <label>Email</label>
+                    <input type="email" class="form-control email" placeholder="Email">
                 </div>
                 <div class="form-group">
-                    <label for="phone1">Phone Number</label>
-                    <input type="tel" class="form-control" id="phone1" placeholder="Phone Number">
+                    <label>Phone Number</label>
+                    <input type="tel" class="form-control phone" placeholder="Phone Number">
                 </div>
             </form>
         </div>
