@@ -78,22 +78,21 @@
             jsonData.severity = $("#severityForm").val();
             var lat;
             var lng;
-            if (navigator.geolocation) {
+            if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     lat = position.coords.latitude;
                     lng = position.coords.longitude;
                     jsonData.location = { latitude: lat, longitude: lng };
-                });
+                    $.post("/api/requests", jsonData,
+                        function () {
+                            console.log("Hey, it's a success!");
+                        },
+                        'json');
+                    });
             } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
                 jsonData.location = { latitude: 0, longitude: 0 };
             }
-            console.log(jsonData);
-            $.post("/api/requests",jsonData,
-                function () {
-                    console.log("Hey, it's a success!");
-                },
-                'json');
         }
     </script>
 </head>
