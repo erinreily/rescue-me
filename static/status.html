@@ -12,6 +12,9 @@
     <script>
         function fetchStatus() {
             var confirmnum = $("#confirmnum").val();
+            $.get("/api/requests/" + confirmnum, "", function (data, status, jxhqr) {
+                console.log(data);
+            });
             //Get info based on confirmation num
         }
     </script>
