@@ -12,6 +12,16 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrVbL6gcTITP7_sqp7GGUDD4UVppmdPxA"></script>
     <script src="gmaps.js"></script>
     <script>
+        function postJSON(url, data, callback) {
+          return $.ajax({
+                        'type': 'POST',
+                        'url': url,
+                        'contentType': 'application/json',
+                        'data': JSON.stringify(data),
+                        'dataType': 'json',
+                        'success': callback
+          });
+        }
         function openDetails(id) {
             $.get("/api/requests/" + id, "", function (data, status, jqxhr) {
                 if (data.status !== 'success') {
@@ -33,6 +43,24 @@
                     pet = data.data.pets[i];
                     $('#pets').append(pet.type + ', ' + pet.breed + ', ' + pet.age + '<br />');
                 }
+                // make a new button each time
+                var button = $('<input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">');
+                $('#takeButton').html('');
+                $('#takeButton').append(button);
+                button.click(function() {
+                  if (button.prop('disabled'))
+                    return;
+                  button.prop('disabled', true);
+                  postJSON("/api/requests/" + id + "/take", {}, function(respData) {
+                    if (respData.status === 'success') {
+                      button.replaceWith(document.createTextNode("Taken!"));
+                      $('#modalConfirm').modal('hide');
+                    } else {
+                      alert('error taking: ' + respData.errors);
+                      button.prop('disabled', false);
+                    }
+                  });
+                });
                 $('#modalConfirm').modal();
                 $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
                   if (geodata.status !== 'success') {
@@ -118,7 +146,7 @@
                     <div id="pets"></div>
                 </div>
                 <div class="modal-footer">
-                    <input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">
+                  <span id="takeButton"></span>
                 </div>
             </div>
         </div>
