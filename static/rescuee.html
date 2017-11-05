@@ -50,9 +50,11 @@
     }
 		function postRequest(jsonData) {
 			postJSON("/api/requests", jsonData,
-                        function () {
-                            console.log("Hey, it's a success!");
-                            window.location.href = "submit-success.html"; //PASS CONFIRMATION NUMBER??
+                        function (data) {
+                            if (data.status !== 'success')
+                                alert('there was an error submitting the request: ' + data.errors);
+                            $('#confirmationNumber').text(data.data.id);
+                            $('#modalConfirm').modal();
                         });
 		}
 		function promptForAddress(jsonData) {
@@ -175,5 +177,25 @@
     </div>
     <div style="height:5%; background-color:#f4f4f4; bottom:0px; width:100%;" class="footer">
         <h5 class="text-center">2017 Erin, Aeddon, and James</h5>
+    </div>
+    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Success!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Your request has been submitted to the system. Your confirmation number is:
+            <strong id="confirmationNumber">(ERROR!)</strong>.
+            Please retain this number to view your request's status and mark as resolved.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
 </body>
