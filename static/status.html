@@ -21,7 +21,9 @@
                     console.log(person.name);
                     $("#data").append('<h4>' + person.name + '</h4>');
                 }
-                if (data.data.taken != null) {
+                if (data.data.resolved) {
+                    $("#data").append('<h3>has been resolved.</h3>')
+                } else if (data.data.taken != null) {
                     $("#data").append('<h3>was accepted at</h3><h4>' + data.data.taken + '</h4>');
                 }
                 else {
