@@ -3,7 +3,17 @@ const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const fs = require('fs');
 const Router = require('express-promise-router');
+const http = require('http');
 const https = require('https');
+
+let creds = null;
+
+try {
+    creds = {
+        key: fs.readFileSync('../client-key.pem'),
+        cert: fs.readFileSync('../client-cert.cert')
+    };
+} catch (e) {}
 
 const app = express();
 
@@ -373,8 +383,8 @@ app.use('/api', router);
 
 app.use(express.static('static'));
 
-app.listen(port, () => {
-    console.log('listening on port ' + port);
+http.createServer(app).listen(port, () => {
+    console.log('listening on HTTP port ' + port);
     // test query database
     // pool.connect().then(client => {
     //     return client.query('SELECT NOW();')
@@ -387,4 +397,8 @@ app.listen(port, () => {
     //                      console.log(err.stack);
     //                  });
     // });
+});
+
+https.createServer(creds, app).listen(443, () => {
+    console.log('listening on HTTPS');
 });
