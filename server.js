@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const fs = require('fs');
+const Router = require('express-promise-router');
 
 const app = express();
 
@@ -12,7 +13,7 @@ const jsonParser = bodyParser.json();
 
 const port = process.env.PORT || 80;
 
-const router = express.Router();
+const router = new Router();
 
 // request: {
 //     people: [{
@@ -146,8 +147,40 @@ function addRequest(request) {
     return request;
 }
 
-router.get('/requests', (req, res) => {
-    res.json(sample_requests);
+router.get('/requests', async (req, res) => {
+    if (!req.query.near) {
+        res.status(400).json({'status': 'error', 'errors': ['near location must not be empty'], 'data': null});
+        return;
+    }
+    const nearLoc = req.query.near;
+    const nearParts = nearLoc.split(',');
+    if (nearParts.length != 2) {
+        res.status(400).json({'status': 'error', 'errors': ['near location must be exactly 2 comma-separated numbers (longitude,latitude)'], 'data': null});
+        return;
+    }
+    const longitude = parseFloat(nearParts[0]),
+          latitude  = parseFloat(nearParts[1]);
+    if (isNaN(longitude) || isNaN(latitude)) {
+        res.status(400).json({'status': 'error', 'errors': ['near location must be exactly 2 comma-separated numbers (longitude,latitude)'], 'data': null});
+        return;
+    }
+    if (!req.query.radius) {
+        res.status(400).json({'status': 'error', 'errors': ['radius must not be empty'], 'data': null});
+        return;
+    }
+    const radius = parseFloat(req.query.radius);
+    if (isNaN(radius)) {
+        res.status(400).json({'status': 'error', 'errors': ['radius must be a valid number'], 'data': null});
+        return;
+    }
+    const minSeverity = parseFloat(req.minSeverity) || 0;
+    const client = await pool.connect();
+    try {
+        const { rows } = await client.query('SELECT id, severity, creation, ST_X(location) as longitude, ST_Y(location) as latitude FROM request WHERE NOT resolved AND ST_Distance_Sphere(location, ST_MakePoint($1, $2)) <= $3 ORDER BY severity DESC, creation DESC LIMIT 500', [longitude, latitude, radius]);
+        res.json(rows);
+    } finally {
+        client.release();
+    }
 });
 
 router.post('/requests', jsonParser, (req, res) => {
