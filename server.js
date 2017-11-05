@@ -52,7 +52,7 @@ function validateRequest(request) {
     for (const person of request.people) {
         if (!person.name)
             errors.push('name must not be empty');
-        if (!['male', 'female'].includes(person.gender))
+        if (!VALID_GENDERS.includes(person.gender))
             errors.push('gender must be one of \'male\' or \'female\'');
         if (person.age < 0)
             errors.push('age must be at least 0');
