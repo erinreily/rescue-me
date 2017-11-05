@@ -39,14 +39,15 @@
 			result.innerHTML = "<h3>"+num+"</h3>";
 		}
     function postJSON(url, data, callback) {
-      return $.ajax({
-                    'type': 'POST',
-                    'url': url,
-                    'contentType': 'application/json',
-                    'data': JSON.stringify(data),
-                    'dataType': 'json',
-                    'success': callback
-      });
+          return $.ajax({
+                        'type': 'POST',
+                        'url': url,
+                        'contentType': 'application/json',
+                        'data': JSON.stringify(data),
+                        'dataType': 'json',
+                        'success': callback,
+                        'error': function(xhr, status, text) {callback(xhr.responseJSON, status, xhr);}
+          });
     }
 		function postRequest(jsonData) {
 			postJSON("/api/requests", jsonData,
