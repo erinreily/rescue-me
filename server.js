@@ -11,7 +11,7 @@ let creds = null;
 try {
     creds = {
         key: fs.readFileSync('../client-key.pem'),
-        cert: fs.readFileSync('../client-cert.cert')
+        cert: fs.readFileSync('../client-cert.pem')
     };
 } catch (e) {}
 
