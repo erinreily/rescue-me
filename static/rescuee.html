@@ -30,6 +30,10 @@
             $("#deletePet" + num).remove();
             $("#pettitle" + num).remove();
         }
+		function showValue(num) {
+			var result = document.getElementById('result');     
+			result.innerHTML = "<h3>"+num+"</h3>";
+		}
         function submit() {
             var jsonData = {
                 person: [],
@@ -51,6 +55,7 @@
             jsonData.address = $("#address").val();
             jsonData.email = $("#email").val();
             jsonData.phone = $("#phone").val();
+			jsonData.severity = $("#severityForm").val();
             console.log(jsonData);
             //$.post(URL,jsonData,
             //    function () {
@@ -81,6 +86,12 @@
         <h3>Pets</h3>
         <div id="petForm"></div>
         <button style="margin-bottom:2%; margin-top:2%;" onclick="addPet()" class="btn btn-default" id="addPet"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add New Pet</button>
+    </div>
+    <br />
+	<div class="container" style="width:80%">
+        <h3>Severity</h3>
+		<input type="range" id="severityForm" min="1" max="5" value="1" onchange="showValue(this.value);">
+		<div id="result" style="height:40px;width:40px;"><h3>1</h3></div>
     </div>
     <br />
     <div id="contact" class="container" style="width:80%">
