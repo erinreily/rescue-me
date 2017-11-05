@@ -172,7 +172,7 @@ router.get('/requests', async (req, res) => {
     const minSeverity = parseFloat(req.minSeverity) || 0;
     const client = await pool.connect();
     try {
-        const { rows } = await client.query('SELECT id, severity, creation, ST_X(location) as longitude, ST_Y(location) as latitude, ST_Distance_Sphere(location, ST_MakePoint($1, $2)) as distance FROM request WHERE NOT resolved AND ST_Distance_Sphere(location, ST_MakePoint($1, $2)) <= $3 AND severity >= $4 ORDER BY severity DESC, creation DESC LIMIT 500', [longitude, latitude, radius, minSeverity]);
+        const { rows } = await client.query('SELECT id, severity, creation, ST_X(location) as longitude, ST_Y(location) as latitude, ST_Distance_Sphere(location, ST_MakePoint($1, $2)) as distance, taken FROM request WHERE NOT resolved AND ST_Distance_Sphere(location, ST_MakePoint($1, $2)) <= $3 AND severity >= $4 ORDER BY severity DESC, creation DESC LIMIT 500', [longitude, latitude, radius, minSeverity]);
         res.json({'status': 'success', 'data': rows, 'errors': []});
     } finally {
         client.release();
@@ -271,6 +271,29 @@ router.post('/requests/:id/resolve', jsonParser, async (req, res) => {
         if (rows[0].resolved)
             throw [400, 'request ' + id + ' already resolved'];
         await client.query('UPDATE request SET resolved = true WHERE id = $1', [id]);
+        res.json({'status': 'success', 'errors': [], 'data': null});
+    } catch (e) {
+        res.status(e[0]).json({'status': 'error', 'errors': [e[1]], 'data': null});
+    } finally {
+        client.release();
+    }
+});
+
+router.post('/requests/:id/take', jsonParser, async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+        res.status(400).json({'status': 'error', 'errors': ['id must be a valid integer'], 'data': null});
+    }
+    const client = await pool.connect();
+    try {
+        const { rows } = await client.query('SELECT taken FROM request WHERE id = $1', [id]);
+        if (rows.length > 1)
+            throw [500, 'SELECT on primary key returned more than one row'];
+        if (rows.length == 0)
+            throw [404, 'no request with id ' + id];
+        if (rows[0].taken !== null)
+            throw [400, 'request ' + id + ' already taken'];
+        await client.query('UPDATE request SET taken = NOW() WHERE id = $1', [id]);
         res.json({'status': 'success', 'errors': [], 'data': null});
     } catch (e) {
         res.status(e[0]).json({'status': 'error', 'errors': [e[1]], 'data': null});
