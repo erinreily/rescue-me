@@ -88,15 +88,9 @@
                 jsonData.pets.push({ type: type, breed: breed, age: petage });
             });
             $("#contactForm form").each(function (index) {
-<<<<<<< HEAD
                 var email = $(this).find(".email").val();
                 var phone = $(this).find(".phone").val();
-                if (index = 0) {
-=======
-                var email = $("#email" + (index + 1)).val();
-                var phone = $("#phone" + (index + 1)).val();
                 if (index === 0) {
->>>>>>> 476a56617d488510d71b27b60c5b26b6dd785409
                     var primary = true;
                 }
                 else {
@@ -105,22 +99,22 @@
                 jsonData.contacts.push({ phone: phone, email: email, primary: primary });
             });
             jsonData.severity = $("#severityForm").val();
-            //var lat;
-            //var lng;
-            //if ("geolocation" in navigator) {
-            //    navigator.geolocation.getCurrentPosition(function (position) {
-            //        lat = position.coords.latitude;
-            //        lng = position.coords.longitude;
-            //        jsonData.location = { latitude: lat, longitude: lng };
-            //        //postRequest(jsonData);
-            //    }, function () {
-            //        console.log("error in getting current position");
-			//		promptForAddress(jsonData);
-            //    });
-            //} else {
-            //    x.innerHTML = "Geolocation is not supported by this browser.";
-            //    promptForAddress(jsonData);
-            //}
+            var lat;
+            var lng;
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    lat = position.coords.latitude;
+                    lng = position.coords.longitude;
+                    jsonData.location = { latitude: lat, longitude: lng };
+                    postRequest(jsonData);
+                }, function () {
+                    console.log("error in getting current position");
+					promptForAddress(jsonData);
+                });
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+                promptForAddress(jsonData);
+            }
             console.log(jsonData);
         }
     </script>
