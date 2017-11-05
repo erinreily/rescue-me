@@ -14,7 +14,8 @@
             var confirmnum = $("#confirmnum").val();
             $.get("/api/requests/" + confirmnum, "", function (data, status, jxhqr) {
                 $("#data").append('<h4>Request for:</h4>');
-                $.each(data.people, function (index, person) {
+                for (var i = 0; i < data.people.length; i++) {
+                    var person = data.people[i];
                     console.log(person.name);
                     $("#data").append(person.name);
                 });
