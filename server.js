@@ -219,7 +219,7 @@ router.get('/requests/:id', async (req, res) => {
             taken: row.taken,
             people: peopleResult.rows,
             pets: petsResult.rows,
-            contact: contactResult.rows
+            contacts: contactResult.rows
         };
         res.json({'status': 'success', 'errors': [], 'data': request});
     } finally {
