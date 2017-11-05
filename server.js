@@ -172,7 +172,7 @@ router.get('/requests', async (req, res) => {
     const minSeverity = parseFloat(req.minSeverity) || 0;
     const client = await pool.connect();
     try {
-        const { rows } = await client.query('SELECT id, severity, creation, ST_X(location) as longitude, ST_Y(location) as latitude FROM request WHERE NOT resolved AND ST_Distance_Sphere(location, ST_MakePoint($1, $2)) <= $3 AND severity >= $4 ORDER BY severity DESC, creation DESC LIMIT 500', [longitude, latitude, radius, minSeverity]);
+        const { rows } = await client.query('SELECT id, severity, creation, ST_X(location) as longitude, ST_Y(location) as latitude, ST_Distance_Sphere(location, ST_MakePoint($1, $2)) as distance FROM request WHERE NOT resolved AND ST_Distance_Sphere(location, ST_MakePoint($1, $2)) <= $3 AND severity >= $4 ORDER BY severity DESC, creation DESC LIMIT 500', [longitude, latitude, radius, minSeverity]);
         res.json({'status': 'success', 'data': rows, 'errors': []});
     } finally {
         client.release();
