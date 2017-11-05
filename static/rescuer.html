@@ -12,7 +12,7 @@
     <script src="https://maps.googleapis.com/maps/api/js"></script>
     <script src="gmaps.js"></script>
 </head>
-<body style="background-color:#4d4d4d">
+<body style="background-color:white">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -33,6 +33,13 @@
     </script>
     <br />
     <div id="requests" class="container-fluid">
+		<p style="font-size:5vw">Order by
+		<select name="Order" style="font-size:5vw; height:15vw; width:30vw">
+			<option value="closeness" style="font-size:4vw;" selected><h3>Closeness</h3></option>
+			<option value="severity" style="font-size:4vw;"><h3>Severity</h3></option>
+		</select>
+		</p>
+		<br>
         <!--This html will be generated dynamically from database-->
         <a href="rescuer-details.html">
             <div class="panel panel-default">
