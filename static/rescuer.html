@@ -101,8 +101,8 @@
                     var marker = mapObj.addMarker({
                         lat: data.data[i].latitude,
                         lng: data.data[i].longitude,
-                        title: data.data[i].id,
-                        label: data.data[i].severity,
+                        title: data.data[i].id.toString(),
+                        label: data.data[i].severity.toString(),
                         click: function (e) {
                           openDetails(id);
                         },
