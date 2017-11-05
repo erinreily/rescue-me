@@ -46,7 +46,7 @@ const VALID_GENDERS = ['male', 'female', 'other'];
 
 function validateRequest(request) {
     const errors = [];
-    if (request.people.length === 0) {
+    if (!request.people || request.people.length === 0) {
         errors.push('people must not be empty');
     }
     for (const person of request.people) {
@@ -63,7 +63,7 @@ function validateRequest(request) {
         if (!pet.type)
             errors.push('pet type must not be empty');
     }
-    if (request.contacts.length == 0) {
+    if (!request.contacts || request.contacts.length == 0) {
         errors.push('contacts must not be empty');
     }
     let primaryFound = false;
@@ -98,7 +98,7 @@ function validateRequest(request) {
         errors.push('id must not be present');
     if (request.resolved)
         errors.push('resolved must not be present');
-    if (errors)
+    if (errors.length > 0)
         return {
             'valid': false,
             'errors': errors
@@ -125,7 +125,7 @@ async function addRequest(request) {
             await client.query('INSERT INTO person (name, gender, age, comments, request_id) VALUES ($1, $2, $3, $4, $5)', [person.name, person.gender, person.age, person.comments, id]);
         }
         for (const pet of request.pets) {
-            await client.query('INSERT INTO pet (type, breed, age, request_id) VALUES ($1, $2, $3, $4)', [pet.type, pet.breed || '', pet.age === 0 ? 0 : pet || null, id]);
+            await client.query('INSERT INTO pet (type, breed, age, request_id) VALUES ($1, $2, $3, $4)', [pet.type, pet.breed || '', pet.age === 0 ? 0 : pet.age || null, id]);
         }
         for (const contact of request.contacts) {
             await client.query('INSERT INTO contact (phone, email, isprimary, request_id) VALUES ($1, $2, $3, $4)', [contact.phone || null, contact.email || null, contact.primary, id]);
@@ -220,7 +220,7 @@ router.post('/requests', jsonParser, async (req, res) => {
     }
     const result = validateRequest(req.body);
     if (!result.valid) {
-        req.status(400).json({
+        res.status(400).json({
             'status': 'error',
             'data': null,
             'errors': result.errors
@@ -235,14 +235,14 @@ router.post('/requests', jsonParser, async (req, res) => {
         error = e;
     }
     if (!added) {
-        req.status(500).json({
+        res.status(500).json({
             'status': 'error',
             'data': null,
             'errors': ['internal error adding the request: ' + error]
         });
         return;
     }
-    req.json({
+    res.json({
          'status': 'success',
          'data': added,
          'errors': []
