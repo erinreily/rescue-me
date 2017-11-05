@@ -216,6 +216,7 @@ router.get('/requests/:id', async (req, res) => {
             location: { 'longitude': row.longitude, 'latitude': row.latitude },
             creation: row.creation,
             resolved: row.resolved,
+            taken: row.taken,
             people: peopleResult.rows,
             pets: petsResult.rows,
             contact: contactResult.rows
