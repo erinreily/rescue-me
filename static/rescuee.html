@@ -49,8 +49,7 @@
                 people: [],
                 pets: [],
                 contacts: [],
-                severity: 1,
-                location
+                severity: 1
             };
             $("#personForm form").each(function (index) {
                 var name = $("#name" + (index + 1)).val();
@@ -83,11 +82,11 @@
                 navigator.geolocation.getCurrentPosition(function (position) {
                     lat = position.coords.latitude;
                     lng = position.coords.longitude;
-                    jsonData.location.push({ latitude: lat, longitude: lng });
+                    jsonData.location = { latitude: lat, longitude: lng };
                 });
             } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
-                jsonData.location.push({ latitude: 0, longitude: 0 })
+                jsonData.location = { latitude: 0, longitude: 0 };
             }
             console.log(jsonData);
             $.post("/api/requests",jsonData,
