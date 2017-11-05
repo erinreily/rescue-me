@@ -96,7 +96,7 @@
                   $('#panels').append(panel);
                   var pbody = panel.find('.panel-body');
                   pbody.append(document.createTextNode('Severity: ' + data.data[i].severity + ', '));
-                  pbody.append(document.createTextNode('Distance: ' + data.data[i].distance / 1609.344 + ' mi'));
+                  pbody.append(document.createTextNode('Distance: ' + (data.data[i].distance / 1609.344).toFixed(2) + ' mi'));
                     var id = data.data[i].id;
                     var marker = mapObj.addMarker({
                         lat: data.data[i].latitude,
