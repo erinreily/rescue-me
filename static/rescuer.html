@@ -16,7 +16,9 @@
             $.get("/api/requests/" + id, "", function (data, status, jqxhr) {
                 if (data.status !== 'success')
                     alert('there was an error submitting the request: ' + data.errors);
-                $('#address').append(data.data.latitude + ', ' + data.data.longitude);
+                $("#people").html("<h4>People</h4><br />");
+                $("#pets").html("<h4>Pets</h4><br />");
+                $('#address').text("<h4>Location</h4><br />" + data.data.latitude + ', ' + data.data.longitude);
                 for (var i = 0; i < data.data.people.length; i++) {
                     person = data.data.people[i];
                     $('#people').append(person.name + ', ' + person.gender + ', ' + person.age + ', ' + person.comments + '<br />');
