@@ -44,12 +44,21 @@
 			var result = document.getElementById('result');     
 			result.innerHTML = "<h3>"+num+"</h3>";
 		}
+    function postJSON(url, data, callback) {
+      return $.ajax({
+                    'type': 'POST',
+                    'url': url,
+                    'contentType': 'application/json',
+                    'data': $.toJSON(data),
+                    'dataType': 'json',
+                    'success': callback
+      });
+    }
 		function postRequest(jsonData) {
-			$.post("/api/requests", jsonData,
+			postJSON("/api/requests", jsonData,
                         function () {
                             console.log("Hey, it's a success!");
-                        },
-                        'json');
+                        });
 		}
 		function promptForAddress(jsonData) {
 			var address = prompt('Please enter your address (empty to cancel):');
