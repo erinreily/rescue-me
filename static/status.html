@@ -14,11 +14,10 @@
             var confirmnum = $("#confirmnum").val();
             $.get("/api/requests/" + confirmnum, "", function (data, status, jxhqr) {
                 $("#data").append('<h4>Request for:</h4>');
-                $.each(data.people, function (index, person) {
-                    console.log("hello");
-                    console.log(person.name);
-                    $("#data").append(person.name);
-                });
+                for (i in data.people) {
+                    console.log(data.people[i]);
+                    $("#data").append(data.people[i].name);
+                }
                 $("#data").append('<button onclick="resolve()" style="margin-top:10px;" type="submit" class="btn btn-default">Resolve</button>');
             });
             
