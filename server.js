@@ -48,44 +48,49 @@ function validateRequest(request) {
     const errors = [];
     if (!request.people || request.people.length === 0) {
         errors.push('people must not be empty');
+    } else {
+        for (const person of request.people) {
+            if (!person.name)
+                errors.push('name must not be empty');
+            if (!VALID_GENDERS.includes(person.gender))
+                errors.push('gender must be one of \'male\' or \'female\'');
+            if (person.age < 0)
+                errors.push('age must be at least 0');
+            if (!person.comments)
+                person.comments = '';
+        }
     }
-    for (const person of request.people) {
-        if (!person.name)
-            errors.push('name must not be empty');
-        if (!VALID_GENDERS.includes(person.gender))
-            errors.push('gender must be one of \'male\' or \'female\'');
-        if (person.age < 0)
-            errors.push('age must be at least 0');
-        if (!person.comments)
-            person.comments = '';
-    }
-    for (const pet of request.pets) {
-        if (!pet.type)
-            errors.push('pet type must not be empty');
+    if (request.pets) {
+        for (const pet of request.pets) {
+            if (!pet.type)
+                errors.push('pet type must not be empty');
+        }
     }
     if (!request.contacts || request.contacts.length == 0) {
         errors.push('contacts must not be empty');
     }
     let primaryFound = false;
-    for (const contact of request.contacts) {
-        if (!contact.phone && !contact.email)
-            errors.push('either phone or email must not be empty');
-        if (contact.phone)
-            if (!/^\d{10}$/.test(contact.phone))
-                errors.push('phone number must be a valid US phone number');
-        if (contact.email)
-            if (!/^[^@]+@[^@.]+\.[^@]+/.test(contact.email))
-                errors.push('email must be a valid email (exactly one @ symbol, domain must have a dot)');
-        if (contact.primary === 'true')
-            contact.primary = true;
-        if (contact.primary === 'false')
-            contact.primary = false;
-        if (!(contact.primary === true || contact.primary === false))
-            errors.push('primary must be a true or false');
-        if (contact.primary) {
-            if (primaryFound)
-                errors.push('must have exactly one primary contact');
-            primaryFound = true;
+    if (request.contacts) {
+        for (const contact of request.contacts) {
+            if (!contact.phone && !contact.email)
+                errors.push('either phone or email must not be empty');
+            if (contact.phone)
+                if (!/^\d{10}$/.test(contact.phone))
+                    errors.push('phone number must be a valid US phone number');
+            if (contact.email)
+                if (!/^[^@]+@[^@.]+\.[^@]+/.test(contact.email))
+                    errors.push('email must be a valid email (exactly one @ symbol, domain must have a dot)');
+            if (contact.primary === 'true')
+                contact.primary = true;
+            if (contact.primary === 'false')
+                contact.primary = false;
+            if (!(contact.primary === true || contact.primary === false))
+                errors.push('primary must be a true or false');
+            if (contact.primary) {
+                if (primaryFound)
+                    errors.push('must have exactly one primary contact');
+                primaryFound = true;
+            }
         }
     }
     if (!primaryFound)
