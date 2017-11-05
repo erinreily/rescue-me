@@ -22,8 +22,8 @@
             //        lng = position.coords.longitude;
             //    });
             $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
-                for (var i = 0; i < data.length; i++) {
-                    $("#panels").append('<a href="rescuer-details.html"><div class="panel panel-default"><div class="panel-body">Severity: ' + data[i].severity + ' Distance: ' + data[i].distance + '</div></div></a>')
+                for (var i = 0; i < data.data.length; i++) {
+                    $("#panels").append('<a href="rescuer-details.html"><div class="panel panel-default"><div class="panel-body">Severity: ' + data.data[i].severity + ' Distance: ' + data.data[i].distance + '</div></div></a>')
                 }
             });
         }
