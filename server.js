@@ -201,15 +201,18 @@ router.get('/requests/:id', async (req, res) => {
             return;
         }
         const row = rows[0];
+        const peopleResult = await client.query('SELECT id, name, gender, age, comments FROM person WHERE request_id = $1', [id]);
+        const petsResult = await client.query('SELECT id, type, breed, age FROM pet WHERE request_id = $1', [id]);
+        const contactResult = await client.query('SELECT id, phone, email, isprimary AS primary FROM contact WHERE request_id = $1', [id]);
         const request = {
             id: row.id,
             severity: row.severity,
             location: { 'longitude': row.longitude, 'latitude': row.latitude },
             creation: row.creation,
             resolved: row.resolved,
-            people: [],
-            pets: [],
-            contact: []
+            people: peopleResult.rows,
+            pets: petsResult.rows,
+            contact: contactResult.rows
         };
         res.json({'status': 'success', 'errors': [], 'data': request});
     } finally {
