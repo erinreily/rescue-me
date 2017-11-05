@@ -10,7 +10,8 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script>
-        function fetchStatus() {
+        function fetchStatus(ev) {
+            if (ev) ev.preventDefault();
             var confirmnum = $("#confirmnum").val();
             $("#data").text("Loading...");
             $.get("/api/requests/" + confirmnum, "", function (data, status, jxhqr) {
@@ -71,12 +72,15 @@
         </div>
     </nav>
     <div class="container-fluid" style="width:80%;">
-        <form>
+        <form id="confirmForm">
             <label for="confirmnum">Confirmation Number</label>
             <input type="number" class="form-control" id="confirmnum" placeholder="Confirmation Number"/>
+            <button type="submit" style="margin-top:10px;" type="submit" class="btn btn-default">Submit</button>
         </form>
-        <button onclick="fetchStatus()" style="margin-top:10px;" type="submit" class="btn btn-default">Submit</button>
     </div>
+    <script type="text/javascript">
+      $('#confirmForm').submit(fetchStatus);
+    </script>
     <div id="data" class="container-fluid" style="width:80%;">
         <!--Load data here-->
         <!--Also add resolve button once loaded-->
