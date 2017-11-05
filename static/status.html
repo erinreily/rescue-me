@@ -17,6 +17,8 @@
             });
             $("#data").append('<h4>Request for:</h4>');
             $.each(data.people, function (index, person) {
+                console.log(person);
+                console.log(person.name);
                 $("#data").append(person.name);
             });
             $("#data").append('<button onclick="resolve()" style="margin-top:10px;" type="submit" class="btn btn-default">Resolve</button>');
