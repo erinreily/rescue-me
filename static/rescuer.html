@@ -175,7 +175,11 @@
             lng: currentLocation.longitude,
             title: "Current Location",
             icon: {
-              path: google.maps.SymbolPath.CIRCLE
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 5,
+              strokeWeight: 3,
+              strokeColor: 'white',
+              fillColor: '#4286f4'
             }
         });
 		  getData();
