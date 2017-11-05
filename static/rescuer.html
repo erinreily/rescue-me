@@ -104,7 +104,7 @@
                   }
                   return a.distance - b.distance;
                 });
-				for (int i = 0; i < markers.length; i++) {
+				for (var i = 0; i < markers.length; i++) {
 					markers[i].setMap(null);
 				}
 				markers = [];
@@ -158,8 +158,8 @@
 	var currentLocation = {latitude: 29.721826, longitude: -95.340518};
 	var mapObj = new GMaps({
       el: '#map',
-      lat: currentLocation.latitude;
-      lng: currentLocation.longitude;
+      lat: currentLocation.latitude,
+      lng: currentLocation.longitude
 	});
 	
 	if (navigator.geolocation) {
