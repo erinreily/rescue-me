@@ -52,7 +52,7 @@
                     pet = data.data.pets[i];
                     $('#pets').append(pet.type + ', ' + pet.breed + ', ' + pet.age + '<br />');
                 }
-                if (data.data.taken === null) {
+                if (data.data.taken == null) {
                   // make a new button each time
                   var button = $('<input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">');
                   $('#takeButton').html('');
