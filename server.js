@@ -110,7 +110,15 @@ async function addRequest(request) {
             throw 'INSERT ... RETURNING returned more than one row';
         }
         const id = rows[0].id;
-        // TODO: insert subfields
+        for (const person of request.people) {
+            await client.query('INSERT INTO person (name, gender, age, comments, request_id) VALUES ($1, $2, $3, $4, $5)', [person.name, person.gender, person.age, person.comments, id]);
+        }
+        for (const pet of request.pets) {
+            await client.query('INSERT INTO pet (type, breed, age, request_id) VALUES ($1, $2, $3, $4)', [pet.type, pet.breed || '', pet.age === 0 ? 0 : pet || null, id]);
+        }
+        for (const contact of request.contact) {
+            await client.query('INSERT INTO contact (phone, email, isprimary, request_id) VALUES ($1, $2, $3, $4)', [contact.phone || null, contact.email || null, contact.primary, id]);
+        }
         return {'id': id};
     } finally {
         client.release();
