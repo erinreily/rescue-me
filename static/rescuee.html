@@ -22,7 +22,7 @@
         }
         function addPet() {
             var num = $("#petForm form").length + 1;
-            var formHtml = '<h4 id="pettitle' + num + '">Pet ' + num + '</h4><form id="pet' + num + '"><div class="form-group"><label for="type' + num + '">Type/Breed</label><input type="text" class="form-control" id="type' + num + '" placeholder="Type/Breed"></div><div class="form-group"><label for="petage' + num + '">Age</label><input type="number" class="form-control" id="petage' + num + '" placeholder="Age"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePet(' + num + ')" class="btn btn-danger" id="deletePet' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Pet ' + num + '</button>'
+            var formHtml = '<h4 id="pettitle' + num + '">Pet ' + num + '</h4><form id="pet' + num + '"><div class="form-group"><label for="type' + num + '">Type</label><select class="form-control" id="type' + num + '"><option>Cat</option><option>Dog</option><option>Bird</option><option>Rodent</option><option>Other</option></select></div><div class="form-group"><label for="breed' + num + '">Breed</label><input type="text" class="form-control" id="breed' + num + '" placeholder="Breed"></div><div class="form-group"><label for="petage' + num + '">Age</label><input type="number" class="form-control" id="petage' + num + '" placeholder="Age"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deletePet(' + num + ')" class="btn btn-danger" id="deletePet' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Pet ' + num + '</button>'
             $("#petForm").append(formHtml);
         }
         function deletePet(num) {
@@ -30,42 +30,73 @@
             $("#deletePet" + num).remove();
             $("#pettitle" + num).remove();
         }
+        function addContact() {
+            var num = $("#contactForm form").length + 1;
+            var formHtml = '<h4 id="contacttitle' + num + '">Contact ' + num + '</h4><form id="contact' + num + '"><div class="form-group"><label for="email' + num + '">Email</label><input type="email" class="form-control" id="email' + num + '" placeholder="Email"></div><div class="form-group"><label for="phone' + num + '">Phone Number</label><input type="tel" class="form-control" id="phone' + num + '" placeholder="Phone Number"></div></form><button style="margin-bottom:2%;margin-top:2%;" onclick="deleteContact(' + num + ')" class="btn btn-danger" id="deleteContact' + num + '"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Delete Contact ' + num + '</button>';
+            $("#contactForm").append(formHtml);
+        }
+        function deleteContact(num) {
+            $("#contact" + num).remove();
+            $("#deleteContact" + num).remove();
+            $("#contacttitle" + num).remove();
+        }
 		function showValue(num) {
 			var result = document.getElementById('result');     
 			result.innerHTML = "<h3>"+num+"</h3>";
 		}
         function submit() {
             var jsonData = {
-                person: [],
-                pet: [],
-                address, email, phone
+                people: [],
+                pets: [],
+                contacts: [],
+                severity,
+                location: []
             };
             $("#personForm form").each(function (index) {
                 var name = $("#name" + (index + 1)).val();
                 var age = $("#age" + (index + 1)).val();
-                var gender = $("#gender" + (index + 1)).val();
+                var gender = $("#gender" + (index + 1)).val().toLowerCase();
                 var comments = $("#comments" + (index + 1)).val();
-                jsonData.person.push({ name: name, age: age, gender: gender, comments: comments });
+                jsonData.people.push({ name: name, gender: gender, age: age, comments: comments });
             });
             $("#petForm form").each(function (index) {
                 var type = $("#type" + (index + 1)).val();
+                var breed = $("#breed" + (index + 1)).val();
                 var petage = $("#petage" + (index + 1)).val();
-                jsonData.pet.push({ type: type, age: petage });
+                jsonData.pets.push({ type: type, breed: breed, age: petage });
             });
-            jsonData.address = $("#address").val();
-            jsonData.email = $("#email").val();
-            jsonData.phone = $("#phone").val();
-			jsonData.severity = $("#severityForm").val();
+            $("#contactForm form").each(function (index) {
+                var email = $("#email" + (index + 1)).val();
+                var phone = $("#phone" + (index + 1)).val();
+                if (index = 0) {
+                    var primary = true;
+                }
+                else {
+                    primary = false;
+                }
+                jsonData.contacts.push({ phone: phone, email: email, primary: primary });
+            });
+            jsonData.severity = $("#severityForm").val();
+            var lat;
+            var lng;
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    lat = position.coords.latitude;
+                    lng = position.coords.longitude;
+                    jsonData.location.push({ latitude: lat, longitude: lng });
+                });
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
             console.log(jsonData);
-            //$.post(URL,jsonData,
-            //    function () {
-            //        console.log("Hey, it's a success!");
-            //    });
+            $.post("/api/resources",jsonData,
+                function () {
+                    console.log("Hey, it's a success!");
+                });
         }
     </script>
 </head>
 <body style="background-color:#4d4d4d; padding-bottom:10%; padding-top:0;">
-
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -74,8 +105,7 @@
             </div>
         </div>
     </nav>
-
-        <h1 class="text-center">Who needs rescuing? <br /><small>Enter all people and pets</small></h1>
+    <h1 class="text-center">Who needs rescuing? <br /><small>Enter all people and pets</small></h1>
     <div class="container" style="width:80%">
         <h3>People</h3>
         <div id="personForm"></div>
@@ -94,23 +124,23 @@
 		<div id="result" style="height:40px;width:40px;"><h3>1</h3></div>
     </div>
     <br />
-    <div id="contact" class="container" style="width:80%">
-        <h3>Contact Information</h3>
-        <form>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" class="form-control" id="address" placeholder="Address">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Email">
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
-            </div>
-        </form>
+    <div class="container" style="width:80%">
+        <h3>Primary Contact Information</h3>
+        <div id="contactForm">
+            <form id="contact1">
+                <div class="form-group">
+                    <label for="email1">Email</label>
+                    <input type="email" class="form-control" id="email1" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="phone1">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone1" placeholder="Phone Number">
+                </div>
+            </form>
+        </div>
+        <button style="margin-bottom:2%;margin-top:2%;" onclick="addContact()" class="btn btn-default" id="addContact"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Addl. Contact Information</button>
+    </div>
+    <div class="container-fluid" style="width:80%">
         <button onclick="submit()" style="margin-top:10px;" type="submit" class="btn btn-default">Submit</button>
     </div>
-
 </body>
