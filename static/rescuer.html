@@ -11,6 +11,9 @@
       .panel-highlight {
         background-color: #ffaaaa;
       }
+      #panels .panel {
+        transition: background-color 0.4s;
+      }
     </style>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -31,7 +34,7 @@
                         'error': function(xhr, status, text) {callback(xhr.responseJSON, status, xhr);}
           });
         }
-        function openDetails(id) {
+        function openDetails(id, panel) {
             $.get("/api/requests/" + id, "", function (data, status, jqxhr) {
                 if (data.status !== 'success') {
                     alert('there was an error submitting the request: ' + data.errors);
@@ -65,6 +68,8 @@
                       if (respData.status === 'success') {
                         button.replaceWith(document.createTextNode("Taken!"));
                         $('#modalConfirm').modal('hide');
+                        if (panel)
+                          panel.addClass("panel-taken");
                       } else {
                         alert('error taking: ' + respData.errors);
                         button.prop('disabled', false);
@@ -112,7 +117,7 @@
                 for (var i = 0; i < data.data.length; i++) {
                   (function(id, panel) {
                   panel.click(function() {
-                    openDetails(id);
+                    openDetails(id, panel);
                   });
                   if (data.data[i].taken)
                     panel.addClass('panel-taken');
@@ -126,7 +131,7 @@
                         title: data.data[i].id.toString(),
                         label: data.data[i].severity.toString(),
                         click: function (e) {
-                          openDetails(id);
+                          openDetails(id, panel);
                         },
                         mouseover: function (e) {
                           panel.addClass('panel-highlight');
