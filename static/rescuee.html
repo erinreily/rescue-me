@@ -38,12 +38,21 @@
 			var result = document.getElementById('result');     
 			result.innerHTML = "<h3>"+num+"</h3>";
 		}
+    function postJSON(url, data, callback) {
+      return $.ajax({
+                    'type': 'POST',
+                    'url': url,
+                    'contentType': 'application/json',
+                    'data': JSON.stringify(data),
+                    'dataType': 'json',
+                    'success': callback
+      });
+    }
 		function postRequest(jsonData) {
-			$.post("/api/requests", JSON.stringify(jsonData),
+			postJSON("/api/requests", jsonData,
                         function () {
                             console.log("Hey, it's a success!");
-                        },
-                        'json');
+                        });
 		}
 		function promptForAddress(jsonData) {
 			var address = prompt('Please enter your address (empty to cancel):');
@@ -79,9 +88,15 @@
                 jsonData.pets.push({ type: type, breed: breed, age: petage });
             });
             $("#contactForm form").each(function (index) {
+<<<<<<< HEAD
                 var email = $(this).find(".email").val();
                 var phone = $(this).find(".phone").val();
                 if (index = 0) {
+=======
+                var email = $("#email" + (index + 1)).val();
+                var phone = $("#phone" + (index + 1)).val();
+                if (index === 0) {
+>>>>>>> 476a56617d488510d71b27b60c5b26b6dd785409
                     var primary = true;
                 }
                 else {
