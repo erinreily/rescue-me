@@ -8,6 +8,9 @@
       .panel-highlight {
         background-color: #ffaaaa;
       }
+      .panel-taken {
+        background-color: #aaaaaa;
+      }
     </style>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -107,6 +110,8 @@
                   panel.click(function() {
                     openDetails(id);
                   });
+                  if (data.data[i].taken)
+                    panel.addClass('panel-taken');
                   $('#panels').append(panel);
                   var pbody = panel.find('.panel-body');
                   pbody.append(document.createTextNode('Severity: ' + data.data[i].severity + ', '));
