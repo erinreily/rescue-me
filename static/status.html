@@ -15,7 +15,7 @@
             $.get("/api/requests/" + confirmnum, "", function (data, status, jxhqr) {
                 $("#data").append('<h4>Request for:</h4>');
                 $.each(data.people, function (index, person) {
-                    console.log(person);
+                    console.log("hello");
                     console.log(person.name);
                     $("#data").append(person.name);
                 });
