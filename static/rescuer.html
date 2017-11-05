@@ -39,7 +39,7 @@
             //    });
             $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
                 for (var i = 0; i < data.data.length; i++) {
-                    $("#panels").append('<div onclick="openDetails("' + data.data[i].id + '")" class="panel panel-default"><div class="panel-body">Severity: ' + data.data[i].severity + ' Distance: ' + data.data[i].distance + ' ID: ' + data.data[i].id + '</div></div>')
+                    $("#panels").append('<div onclick="openDetails(' + data.data[i].id + ')" class="panel panel-default"><div class="panel-body">Severity: ' + data.data[i].severity + ' Distance: ' + data.data[i].distance + ' ID: ' + data.data[i].id + '</div></div>')
                     mapObj.addMarker({
                         lat: data.data[i].latitude,
                         lng: data.data[i].longitude,
