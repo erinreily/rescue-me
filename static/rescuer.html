@@ -224,6 +224,8 @@ $(document).ready(function(){
       $.get("/api/geocode", {'address': address}, function(data) {
         if (data.status == 'success') {
           $('#modalAddress').modal('hide');
+          currentLocation.longitude = data.data.longitude;
+          currentLocation.latitude = data.data.latitude;
           updateLocation();
         } else {
           $('#addressSubmit').prop('disabled', false);
