@@ -170,6 +170,14 @@
           currentLocation.latitude = position.coords.latitude;
           currentLocation.longitude = position.coords.longitude;
 		  mapObj.panTo({lat: currentLocation.latitude, lng:currentLocation.longitude});
+        var curMarker = mapObj.addMarker({
+            lat: currentLocation.latitude,
+            lng: currentLocation.longitude,
+            title: "Current Location",
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE
+            }
+        });
 		  getData();
         },  
 		function () {
