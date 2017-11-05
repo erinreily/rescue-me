@@ -3,11 +3,13 @@ const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const fs = require('fs');
 const Router = require('express-promise-router');
+const https = require('https');
 
 const app = express();
 
 const configPath = 'config.json';
-const pool = new Pool(JSON.parse(fs.readFileSync(configPath, 'UTF-8')));
+const config = JSON.parse(fs.readFileSync(configPath, 'UTF-8'));
+const pool = new Pool(config.database);
 
 const jsonParser = bodyParser.json();
 
@@ -274,6 +276,46 @@ router.post('/requests/:id/resolve', jsonParser, async (req, res) => {
         res.status(e[0]).json({'status': 'error', 'errors': [e[1]], 'data': null});
     } finally {
         client.release();
+    }
+});
+
+function requestHTTPS(url) {
+    return new Promise((resolve, reject) => {
+        const request = https.get(url, (response) => {
+            const body = [];
+            response.on('data', (chunk) => body.push(chunk));
+            response.on('end', () => resolve({'status': response.statusCode, 'body': body.join('')}));
+        });
+        request.on('error', (err) => reject(err))
+    });
+}
+
+router.get('/geocode', async (req, res) => {
+    try {
+        const address = req.query.address;
+        if (!address)
+            throw 'address must not be blank';
+        const response = await requestHTTPS('https://maps.googleapis.com/maps/api/geocode/json\?address=' + encodeURIComponent(address) + '\&key=' + encodeURIComponent(config.googleKey));
+        if (response.status != 200)
+            throw response;
+        const responseJSON = JSON.parse(response.body);
+        if (responseJSON.status != 'OK')
+            throw response;
+        const loc = responseJSON.results[0].geometry.location;
+        res.json({
+            'status': 'success',
+            'data': {
+                'latitude': loc.lat,
+                'longitude': loc.lng
+            },
+            'errors': []
+        });
+    } catch (err) {
+        res.status(400).json({
+            'status': 'error',
+            'data': null,
+            'errors': [err]
+        });
     }
 });
 
