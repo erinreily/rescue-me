@@ -63,18 +63,18 @@
                       }
                     });
                   });
-                  $('#modalConfirm').modal();
-                  $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
-                    if (geodata.status !== 'success') {
-                      addressSpan.text('Error decoding address: ' + geodata.errors);
-                      return;
-                    } else {
-                      addressSpan.text(geodata.data.address);
-                    }
-                  }, 'json');
                 } else {
                   $('#takeButton').text('Already taken!');
                 }
+                $('#modalConfirm').modal();
+                $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
+                  if (geodata.status !== 'success') {
+                    addressSpan.text('Error decoding address: ' + geodata.errors);
+                    return;
+                  } else {
+                    addressSpan.text(geodata.data.address);
+                  }
+                }, 'json');
             });
         }
         function getData() {
