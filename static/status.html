@@ -30,12 +30,31 @@
                 $("#data").append('<button style="margin-top:10px;" type="submit" class="btn btn-default">Resolve</button>');
                 const id = data.data.id;
                 $("#data button").click(function() {
-                  resolve(id);
+                  if (!$("#data button").prop('disabled'))
+                    resolve(id);
                 });
             });
         }
+        function postJSON(url, data, callback) {
+          return $.ajax({
+                        'type': 'POST',
+                        'url': url,
+                        'contentType': 'application/json',
+                        'data': JSON.stringify(data),
+                        'dataType': 'json',
+                        'success': callback
+          });
+        }
         function resolve(id) {
-            console.log("resolving " + id);
+          postJSON("/api/requests/" + id + "/resolve", {}, function(data) {
+            if (data.status === 'success') {
+              $("#data button").replaceWith($(document.createTextNode("Resolved!")));
+            } else {
+              alert('error resolving: ' + data.errors);
+              $("#data button").prop('disabled', false);
+            }
+          });
+          $("#data button").prop('disabled', true);
         }
     </script>
 </head>
