@@ -318,7 +318,7 @@ router.get('/geocode', async (req, res) => {
         const address = req.query.address;
         if (!address)
             throw 'address must not be blank';
-        const response = await requestHTTPS('https://maps.googleapis.com/maps/api/geocode/json\?address=' + encodeURIComponent(address) + '\&key=' + encodeURIComponent(config.googleKey));
+        const response = await requestHTTPS('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(address) + '&key=' + encodeURIComponent(config.googleKey));
         if (response.status != 200)
             throw response;
         const responseJSON = JSON.parse(response.body);
@@ -331,6 +331,33 @@ router.get('/geocode', async (req, res) => {
                 'latitude': loc.lat,
                 'longitude': loc.lng
             },
+            'errors': []
+        });
+    } catch (err) {
+        res.status(400).json({
+            'status': 'error',
+            'data': null,
+            'errors': [err]
+        });
+    }
+});
+
+router.get('/geodecode', async (req, res) => {
+    try {
+        const latitude = parseFloat(req.query.latitude);
+        const longitude = parseFloat(req.query.longitude);
+        if (isNaN(latitude) || isNaN(longitude))
+            throw 'latitude and longitude must be valid numbers';
+        const response = await requestHTTPS('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + encodeURIComponent(latitude) + ',' + encodeURIComponent(longitude) + '&key=' + encodeURIComponent(config.googleKey));
+        if (response.status != 200)
+            throw response;
+        const responseJSON = JSON.parse(response.body);
+        if (responseJSON.status != 'OK')
+            throw response;
+        const address = responseJSON.results[0].formatted_address;
+        res.json({
+            'status': 'success',
+            'data': { 'address': address },
             'errors': []
         });
     } catch (err) {
