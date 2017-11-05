@@ -135,6 +135,8 @@
                           panel.removeClass('panel-highlight');
                         }
                     });
+                    if (data.data[i].taken)
+                      marker.setOpacity(0.5);
 					markers.push(marker);
                   })(data.data[i].id, $('<div class="panel panel-default"><div class="panel-body"></div></div>'));
                 }
