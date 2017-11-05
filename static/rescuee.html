@@ -90,7 +90,7 @@
                 jsonData.location.push({ latitude: 0, longitude: 0 })
             }
             console.log(jsonData);
-            $.post("/api/resources",jsonData,
+            $.post("/api/requests",jsonData,
                 function () {
                     console.log("Hey, it's a success!");
                 },
