@@ -12,22 +12,99 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrVbL6gcTITP7_sqp7GGUDD4UVppmdPxA"></script>
     <script src="gmaps.js"></script>
     <script>
+        function postJSON(url, data, callback) {
+          return $.ajax({
+                        'type': 'POST',
+                        'url': url,
+                        'contentType': 'application/json',
+                        'data': JSON.stringify(data),
+                        'dataType': 'json',
+                        'success': callback,
+                        'error': function(xhr, status, text) {callback(xhr.responseJSON, status, xhr);}
+          });
+        }
         function openDetails(id) {
             $.get("/api/requests/" + id, "", function (data, status, jqxhr) {
-                if (data.status !== 'success')
+                if (data.status !== 'success') {
                     alert('there was an error submitting the request: ' + data.errors);
+                    return;
+                }
                 $("#people").html("<h4>People</h4>");
                 $("#pets").html("<h4>Pets</h4>");
-                $('#address').html("<h4>Location</h4><br />" + data.data.location.latitude + ', ' + data.data.location.longitude);
+                $('#address').html("<h4>Location</h4>");
+                $('#address').append("Latitude: " + data.data.location.latitude + ', longitude: ' + data.data.location.longitude + '<br />');
+                const addressSpan = $(document.createElement('span'));
+                addressSpan.text('Decoding address...');
+                $('#address').append(addressSpan);
                 for (var i = 0; i < data.data.people.length; i++) {
                     person = data.data.people[i];
-                    $('#people').append(person.name + ', ' + person.gender + ', ' + person.age + ', ' + person.comments + '<br />');
+                    $('#people').append(person.name + ', ' + person.gender + ', ' + person.age + (person.comments ? ', ' + person.comments : '') + '<br />');
                 }
                 for (var i = 0; i < data.data.pets.length; i++) {
                     pet = data.data.pets[i];
                     $('#pets').append(pet.type + ', ' + pet.breed + ', ' + pet.age + '<br />');
                 }
+<<<<<<< HEAD
+                // make a new button each time
+                var button = $('<input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">');
+                $('#takeButton').html('');
+                $('#takeButton').append(button);
+                button.click(function() {
+                  if (button.prop('disabled'))
+                    return;
+                  button.prop('disabled', true);
+                  postJSON("/api/requests/" + id + "/take", {}, function(respData) {
+                    if (respData.status === 'success') {
+                      button.replaceWith(document.createTextNode("Taken!"));
+                      $('#modalConfirm').modal('hide');
+                    } else {
+                      alert('error taking: ' + respData.errors);
+                      button.prop('disabled', false);
+                    }
+                  });
+                });
                 $('#modalConfirm').modal();
+                $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
+                  if (geodata.status !== 'success') {
+                    addressSpan.text('Error decoding address: ' + geodata.errors);
+                    return;
+                  } else {
+                    addressSpan.text(geodata.data.address);
+                  }
+                }, 'json');
+=======
+                if (data.data.taken !== null) {
+                  // make a new button each time
+                  var button = $('<input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">');
+                  $('#takeButton').html('');
+                  $('#takeButton').append(button);
+                  button.click(function() {
+                    if (button.prop('disabled'))
+                      return;
+                    button.prop('disabled', true);
+                    postJSON("/api/requests/" + id + "/take", {}, function(respData) {
+                      if (respData.status === 'success') {
+                        button.replaceWith(document.createTextNode("Taken!"));
+                        $('#modalConfirm').modal('hide');
+                      } else {
+                        alert('error taking: ' + respData.errors);
+                        button.prop('disabled', false);
+                      }
+                    });
+                  });
+                  $('#modalConfirm').modal();
+                  $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
+                    if (geodata.status !== 'success') {
+                      addressSpan.text('Error decoding address: ' + geodata.errors);
+                      return;
+                    } else {
+                      addressSpan.text(geodata.data.address);
+                    }
+                  }, 'json');
+                } else {
+                  $('#takeButton').text('Already taken!');
+                }
+>>>>>>> 838bcce364e8bc6b6fd0a0a81fc0ab14daa4c4d3
             });
         }
         function getData() {
@@ -39,6 +116,7 @@
             //        lat = position.coords.latitude;
             //        lng = position.coords.longitude;
             //    });
+
             $.get("/api/requests?near=" + lng + "," + lat + "&radius=" + radius, "", function (data, status, jqxhr) {
                 for (var i = 0; i < data.data.length; i++) {
                     $("#panels").append('<div onclick="openDetails(' + data.data[i].id + ')" class="panel panel-default"><div class="panel-body">Severity: ' + data.data[i].severity + ' Distance: ' + data.data[i].distance + ' ID: ' + data.data[i].id + '</div></div>')
@@ -71,8 +149,8 @@
     <script>
         var mapObj = new GMaps({
             el: '#map',
-            lat: 30,
-            lng: -95
+            lat: 29.721826,
+            lng: -95.340518
         });
     </script>
     <br />
@@ -104,7 +182,7 @@
                     <div id="pets"></div>
                 </div>
                 <div class="modal-footer">
-                    <input class="btn btn-success btn-lg btn-block" type="submit" value="Take Job">
+                  <span id="takeButton"></span>
                 </div>
             </div>
         </div>

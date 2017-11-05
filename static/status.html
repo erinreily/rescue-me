@@ -46,7 +46,8 @@
                         'contentType': 'application/json',
                         'data': JSON.stringify(data),
                         'dataType': 'json',
-                        'success': callback
+                        'success': callback,
+                        'error': function(xhr, status, text) {callback(xhr.responseJSON, status, xhr);}
           });
         }
         function resolve(id) {
