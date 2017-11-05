@@ -49,7 +49,7 @@
                 people: [],
                 pets: [],
                 contacts: [],
-                severity,
+                severity: 1,
                 location: []
             };
             $("#personForm form").each(function (index) {
@@ -87,6 +87,7 @@
                 });
             } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
+                jsonData.location.push({ latitude: 0, longitude: 0 })
             }
             console.log(jsonData);
             $.post("/api/resources",jsonData,
