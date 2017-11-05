@@ -14,11 +14,17 @@
     <script>
         function openDetails(id) {
             $.get("/api/requests/" + id, "", function (data, status, jqxhr) {
-                if (data.status !== 'success')
+                if (data.status !== 'success') {
                     alert('there was an error submitting the request: ' + data.errors);
+                    return;
+                }
                 $("#people").html("<h4>People</h4>");
                 $("#pets").html("<h4>Pets</h4>");
-                $('#address').html("<h4>Location</h4><br />" + data.data.location.latitude + ', ' + data.data.location.longitude);
+                $('#address').html("<h4>Location</h4>");
+                $('#address').append("<br />Latitude: " + data.data.location.latitude + ', longitude: ' + data.data.location.longitude + '<br />');
+                const addressSpan = $(document.createElement('span'));
+                addressSpan.text('Decoding address...');
+                $('#address').append(addressSpan);
                 for (var i = 0; i < data.data.people.length; i++) {
                     person = data.data.people[i];
                     $('#people').append(person.name + ', ' + person.gender + ', ' + person.age + ', ' + person.comments + '<br />');
@@ -28,6 +34,14 @@
                     $('#pets').append(pet.type + ', ' + pet.breed + ', ' + pet.age + '<br />');
                 }
                 $('#modalConfirm').modal();
+                $.get("/api/geodecode", {"latitude": data.data.location.latitude, "longitude": data.data.location.longitude}, function (geodata) {
+                  if (geodata.status !== 'success') {
+                    addressSpan.text('Error decoding address: ' + geodata.errors);
+                    return;
+                  } else {
+                    addressSpan.text(geodata.data.address);
+                  }
+                }, 'json');
             });
         }
         function getData() {
