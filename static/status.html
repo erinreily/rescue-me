@@ -23,18 +23,19 @@
                 }
                 if (data.data.resolved) {
                     $("#data").append('<h3>has been resolved.</h3>')
-                } else if (data.data.taken != null) {
+                } else {
+                  if (data.data.taken != null) {
                     $("#data").append('<h3>was accepted at</h3><h4>' + data.data.taken + '</h4>');
-                }
-                else {
+                  } else {
                     $("#data").append('<h3>is still waiting for acceptance.</h3>')
+                  }
+                  $("#data").append('<button style="margin-top:10px;" type="submit" class="btn btn-default">Resolve</button>');
+                  const id = data.data.id;
+                  $("#data button").click(function() {
+                    if (!$("#data button").prop('disabled'))
+                      resolve(id);
+                  });
                 }
-                $("#data").append('<button style="margin-top:10px;" type="submit" class="btn btn-default">Resolve</button>');
-                const id = data.data.id;
-                $("#data button").click(function() {
-                  if (!$("#data button").prop('disabled'))
-                    resolve(id);
-                });
             });
         }
         function postJSON(url, data, callback) {
