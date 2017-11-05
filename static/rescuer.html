@@ -42,6 +42,7 @@
                 }
                 $("#people").html("<h4>People</h4>");
                 $("#pets").html("<h4>Pets</h4>");
+                $("#contacts").html("<h4>Contacts</h4>");
                 $('#address').html("<h4>Location</h4>");
                 $('#address').append("Latitude: " + data.data.location.latitude + ', longitude: ' + data.data.location.longitude + '<br />');
                 const addressSpan = $(document.createElement('span'));
@@ -54,6 +55,18 @@
                 for (var i = 0; i < data.data.pets.length; i++) {
                     pet = data.data.pets[i];
                     $('#pets').append(pet.type + ', ' + pet.breed + ', ' + pet.age + '<br />');
+                }
+                for (var i = 0; i < data.data.contacts.length; i++) {
+                    contact = data.data.contacts[i];
+                    var contactText = '';
+                    if (contact.phone)
+                      contactText += 'Phone: ' + contact.phone;
+                    if (contact.email)
+                      contactText += (contactText ? ', email: ' : 'Email: ') + contact.email;
+                    if (contact.primary)
+                      contactText += ' (primary)';
+                    $('#contacts').append(document.createTextNode(contactText));
+                    $('#contacts').append('<br>');
                 }
                 if (data.data.taken == null) {
                   // make a new button each time
@@ -240,6 +253,7 @@ $(document).ready(function(){
                     <div id="address"></div>
                     <div id="people"></div>
                     <div id="pets"></div>
+                    <div id="contacts"></div>
                 </div>
                 <div class="modal-footer">
                   <span id="takeButton"></span>
