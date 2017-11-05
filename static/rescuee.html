@@ -52,6 +52,7 @@
 			postJSON("/api/requests", jsonData,
                         function () {
                             console.log("Hey, it's a success!");
+                            window.location.href = "submit-success.html"; //PASS CONFIRMATION NUMBER??
                         });
 		}
 		function promptForAddress(jsonData) {
