@@ -27,7 +27,7 @@
                 $('#address').append(addressSpan);
                 for (var i = 0; i < data.data.people.length; i++) {
                     person = data.data.people[i];
-                    $('#people').append(person.name + ', ' + person.gender + ', ' + person.age + ', ' + person.comments + '<br />');
+                    $('#people').append(person.name + ', ' + person.gender + ', ' + person.age + (person.comments ? ', ' + person.comments : '') + '<br />');
                 }
                 for (var i = 0; i < data.data.pets.length; i++) {
                     pet = data.data.pets[i];
