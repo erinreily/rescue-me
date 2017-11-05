@@ -10,6 +10,7 @@
   "license": "MIT",
   "repository": "https://github.com/erinreily/rescue-me",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "pg": "^7.4.0"
   }
 }

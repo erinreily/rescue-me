@@ -1,6 +1,12 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
+const { Pool } = require('pg');
+const fs = require('fs');
+
+const app = express();
+
+const configPath = 'config.json';
+const pool = new Pool(JSON.parse(fs.readFileSync(configPath, 'UTF-8')));
 
 const jsonParser = bodyParser.json();
 
@@ -182,5 +188,18 @@ app.use('/api', router);
 
 app.use(express.static('static'));
 
-app.listen(port);
-console.log('listening on port ' + port);
+app.listen(port, () => {
+    console.log('listening on port ' + port);
+    // test query database
+    // pool.connect().then(client => {
+    //     return client.query('SELECT NOW();')
+    //                  .then(res => {
+    //                      client.release();
+    //                      console.log("result: ", res.rows[0]);
+    //                  })
+    //                  .catch(err => {
+    //                      client.release();
+    //                      console.log(err.stack);
+    //                  });
+    // });
+});
