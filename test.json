@@ -1,0 +1,34 @@
+{
+    "people": [
+        {
+            "name": "Karl Marx",
+            "gender": "male",
+            "age": 64,
+            "comments": ""
+        },
+        {
+            "name": "Julius Caesar",
+            "gender": "male",
+            "age": 55,
+            "comments": ""
+        }],
+    "pets": [
+        {
+            "type": "cat",
+            "breed": "mountain lion",
+            "age": 6
+        }
+    ],
+    "contacts": [
+        {
+            "phone": null,
+            "email": "karl@example.org",
+            "primary": true
+        }
+    ],
+    "severity": 4,
+    "location": {
+        "latitude": 29.723097,
+        "longitude": -95.354146
+    }
+}

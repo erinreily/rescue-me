@@ -18,7 +18,7 @@ const router = new Router();
 // request: {
 //     people: [{
 //         name: string
-//         gender: 'male' or 'female'
+//         gender: 'male' or 'female' or 'other'
 //         age: number
 //         comments: string
 //     }]
@@ -27,7 +27,7 @@ const router = new Router();
 //         breed: string
 //         age: int
 //     }]
-//     contact: [{
+//     contacts: [{
 //         phone: string
 //         email: string
 //         primary: boolean
@@ -42,7 +42,7 @@ const router = new Router();
 //     resolved: boolean
 // }
 
-const VALID_GENDERS = ['male', 'female'];
+const VALID_GENDERS = ['male', 'female', 'other'];
 
 function validateRequest(request) {
     const errors = [];
@@ -63,6 +63,10 @@ function validateRequest(request) {
         if (!pet.type)
             errors.push('pet type must not be empty');
     }
+    if (request.contacts.length == 0) {
+        errors.push('contacts must not be empty');
+    }
+    let primaryFound = false;
     for (const contact of request.contacts) {
         if (!contact.phone && !contact.email)
             errors.push('either phone or email must not be empty');
@@ -78,7 +82,14 @@ function validateRequest(request) {
             contact.primary = false;
         if (!(contact.primary === true || contact.primary === false))
             errors.push('primary must be a true or false');
+        if (contact.primary) {
+            if (primaryFound)
+                errors.push('must have exactly one primary contact');
+            primaryFound = true;
+        }
     }
+    if (!primaryFound)
+        errors.push('must have exactly one primary contact');
     if (!request.severity)
         errors.push('severity must not be empty');
     if (!request.location || !request.location.longitude || !request.location.latitude)
@@ -116,7 +127,7 @@ async function addRequest(request) {
         for (const pet of request.pets) {
             await client.query('INSERT INTO pet (type, breed, age, request_id) VALUES ($1, $2, $3, $4)', [pet.type, pet.breed || '', pet.age === 0 ? 0 : pet || null, id]);
         }
-        for (const contact of request.contact) {
+        for (const contact of request.contacts) {
             await client.query('INSERT INTO contact (phone, email, isprimary, request_id) VALUES ($1, $2, $3, $4)', [contact.phone || null, contact.email || null, contact.primary, id]);
         }
         return {'id': id};
