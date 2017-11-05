@@ -44,7 +44,7 @@
                 $("#pets").html("<h4>Pets</h4>");
                 $("#contacts").html("<h4>Contacts</h4>");
                 $('#address').html("<h4>Location</h4>");
-                $('#address').append("Latitude: " + data.data.location.latitude + ', longitude: ' + data.data.location.longitude + '<br />');
+                $('#address').append("Latitude: " + data.data.location.latitude + ', Longitude: ' + data.data.location.longitude + '<br />');
                 const addressSpan = $(document.createElement('span'));
                 addressSpan.text('Decoding address...');
                 $('#address').append(addressSpan);
@@ -62,7 +62,7 @@
                     if (contact.phone)
                       contactText += 'Phone: ' + contact.phone;
                     if (contact.email)
-                      contactText += (contactText ? ', email: ' : 'Email: ') + contact.email;
+                      contactText += (contactText ? ', Email: ' : 'Email: ') + contact.email;
                     if (contact.primary)
                       contactText += ' (primary)';
                     $('#contacts').append(document.createTextNode(contactText));
