@@ -249,6 +249,29 @@ router.post('/requests', jsonParser, async (req, res) => {
     });
 });
 
+router.post('/requests/:id/resolve', jsonParser, async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+        res.status(400).json({'status': 'error', 'errors': ['id must be a valid integer'], 'data': null});
+    }
+    const client = await pool.connect();
+    try {
+        const { rows } = await client.query('SELECT resolved FROM request WHERE id = $1', [id]);
+        if (rows.length > 1)
+            throw [500, 'SELECT on primary key returned more than one row'];
+        if (rows.length == 0)
+            throw [404, 'no request with id ' + id];
+        if (rows[0].resolved)
+            throw [400, 'request ' + id + ' already resolved'];
+        await client.query('UPDATE request SET resolved = true WHERE id = $1', [id]);
+        res.json({'status': 'success', 'errors': [], 'data': null});
+    } catch (e) {
+        res.status(e[0]).json({'status': 'error', 'errors': [e[1]], 'data': null});
+    } finally {
+        client.release();
+    }
+});
+
 app.use('/api', router);
 
 app.use(express.static('static'));
