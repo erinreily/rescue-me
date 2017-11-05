@@ -49,6 +49,7 @@ function validateRequest(request) {
     if (!request.people || request.people.length === 0) {
         errors.push('people must not be empty');
     } else {
+        console.log(request.people);
         for (const person of request.people) {
             if (!person.name)
                 errors.push('name must not be empty');
